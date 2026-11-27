@@ -114,7 +114,7 @@
     const m = stage.getScreenCTM(); return m ? pt.matrixTransform(m.inverse()) : { x: 700, y: 500 };
   }
   function restart(el, cls) {
-    if (!el) return;
+    if (!el || !el.classList.contains('it')) return; /* only animate inner groups, never ones placed with a transform */
     el.classList.remove(cls); void el.getBoundingClientRect(); el.classList.add(cls);
     setTimeout(() => el.classList.remove(cls), 900);
   }
@@ -238,7 +238,7 @@
   /* ---------- characters ---------- */
   function guideSvg(id, x, y, s, tag = true) {
     const look = GUIDES[id].look, top = (look.kid ? -262 : -322) * s;
-    return `<g transform="translate(${x} ${y}) scale(${s})"><g class="it guide bob" data-guide="${id}" data-tap="guide:${id}"><circle r="150" cy="-200" fill="#fff" fill-opacity="0.001"/><g filter="url(#depth)">${A.person(look)}</g></g></g>` +
+    return `<g transform="translate(${x} ${y}) scale(${s})"><g class="it guide" data-guide="${id}" data-tap="guide:${id}"><circle r="150" cy="-200" fill="#fff" fill-opacity="0.001"/><g filter="url(#depth)">${A.person(look)}</g></g></g>` +
       (tag ? pill(x, y + top - 26, [oneLine(GUIDES[id].name)], { size: 26, bg: '#3a2f45', fg: '#fff', pad: 18 }) : '');
   }
   const item = art => `<g filter="url(#depth)">${art}</g>`;
@@ -277,7 +277,7 @@
     market: () => `<defs>${lg('mw', ['#fff8e4', '#ffeec4'])}${lg('mf', ['#f3dcb2', '#e2c08b'])}</defs>
       <rect x="-200" y="-300" width="1800" height="1080" fill="url(#mw)"/>
       ${Array.from({ length: 24 }, (_, i) => `<path d="M${-200 + i * 80} -10 L${-120 + i * 80} -10 L${-120 + i * 80} 18 Q${-160 + i * 80} 52 ${-200 + i * 80} 18Z" fill="${i % 2 ? '#fff' : '#E8453C'}"/>`).join('')}
-      ${[440].map((y, r) => `<rect x="430" y="${y}" width="940" height="22" rx="6" fill="#C77B3A"/><rect x="430" y="${y + 22}" width="940" height="10" fill="#a8652c"/>` + Array.from({ length: 13 }, (_, i) => { const c = ['#E8453C', '#3A7BE0', '#F7C928', '#4CB944', '#9B5DE5', '#F58A2A'][(i + r * 3) % 6]; const tall = 52 + ((i * 7 + r * 3) % 3) * 14; return `<g filter="url(#depth)"><rect x="${448 + i * 70}" y="${y - tall}" width="54" height="${tall}" rx="8" fill="${c}"/><rect x="${456 + i * 70}" y="${y - tall + 16}" width="38" height="18" rx="4" fill="#fff" opacity=".85"/></g>`; }).join('')).join('')}
+      ${[440].map((y, r) => `<rect x="430" y="${y}" width="940" height="22" rx="6" fill="#C77B3A"/><rect x="430" y="${y + 22}" width="940" height="10" fill="#a8652c"/>` + Array.from({ length: 13 }, (_, i) => { const c = ['#E8453C', '#3A7BE0', '#F7C928', '#4CB944', '#9B5DE5', '#F58A2A'][(i + r * 3) % 6]; const tall = 52 + ((i * 7 + r * 3) % 3) * 14; return `<g><rect x="${448 + i * 70}" y="${y - tall}" width="54" height="${tall}" rx="8" fill="${c}"/><rect x="${456 + i * 70}" y="${y - tall + 16}" width="38" height="18" rx="4" fill="#fff" opacity=".85"/></g>`; }).join('')).join('')}
       <rect x="-200" y="740" width="1800" height="460" fill="url(#mf)"/>${Array.from({ length: 18 }, (_, i) => `<rect x="${-200 + i * 100}" y="${740 + (i % 2) * 70}" width="100" height="70" fill="#d9b47c" opacity=".55"/><rect x="${-200 + i * 100}" y="${880 + ((i + 1) % 2) * 70}" width="100" height="70" fill="#d9b47c" opacity=".55"/>`).join('')}
       ${fun(1280, 880, 0.8, `<rect x="-90" y="-70" width="180" height="120" rx="16" fill="#3A9AD9" stroke="#2c63b8" stroke-width="5"/><rect x="-66" y="-52" width="132" height="44" rx="8" fill="#c4f5cf"/><text x="0" y="-19" text-anchor="middle" font-size="32" font-weight="900" fill="#2f6b3a" ${FONT}>1 2 3</text><circle cx="-40" cy="22" r="10" fill="#fff"/><circle cx="0" cy="22" r="10" fill="#fff"/><circle cx="40" cy="22" r="10" fill="#fff"/>`)}${vignette}`,
     library: () => `<defs>${lg('lw', ['#f4edff', '#e6dafc'])}${lg('lf', ['#c9a8ef', '#b08cdf'])}</defs>
@@ -334,7 +334,7 @@
       <path d="M-200 760 Q500 690 1000 760 Q1300 730 1600 760 L1600 1200 L-200 1200Z" fill="url(#t2)"/>
       ${banner(oneLine(T.world), '#F25F8B', 700, 110, 66)}
       ${guideSvg('mari', 330, 920, 1.55, false)}
-      ${place(760, 560, 1, `<circle r="170" fill="#fff" fill-opacity="0.001"/>${item(`<circle r="140" fill="#4CB944"/><circle r="140" fill="none" stroke="#2f8a3a" stroke-width="7"/><circle r="118" fill="#5fcb57"/><path d="M-38 -66 L76 0 L-38 66Z" fill="#fff" stroke="#2f8a3a" stroke-width="6" stroke-linejoin="round"/>`)}`, 'data-tap="start" class="it pulse"')}
+      ${place(760, 560, 1, `<circle r="170" fill="#fff" fill-opacity="0.001"/>${(`<circle r="146" cy="8" fill="#2a1640" opacity=".18"/><circle r="140" fill="#4CB944"/><circle r="140" fill="none" stroke="#2f8a3a" stroke-width="7"/><circle r="118" fill="#5fcb57"/><path d="M-38 -66 L76 0 L-38 66Z" fill="#fff" stroke="#2f8a3a" stroke-width="6" stroke-linejoin="round"/>`)}`, 'data-tap="start" class="it pulse"')}
       ${pill(760, 750, langLines(T.play), { size: 36 })}
       ${fam.map((g, i) => { const x = 985 + (i % 4) * 125 + (i > 3 ? 62 : 0), y = i > 3 ? 905 : 770; return `<g transform="translate(${x} ${y}) scale(.6)"><circle r="76" fill="#fff" filter="url(#lift)"/>${A.head(GUIDES[g].look)}</g>${pill(x, y + 60, [GUIDES[g].name[settings.lang === 'pt' ? 'pt' : 'en']], { size: 19, pad: 10 })}`; }).join('')}
       ${vignette}`, 'linear-gradient(#5fbdf0 50%, #55a93a 50%)');
@@ -355,7 +355,7 @@
     return [L.name[settings.lang], h[settings.lang]];
   }
 
-  function mapScreen() {
+  function mapScreen(fromTitle) {
     if (timeIsUp()) return bedtimeScreen();
     const tok = newScene(`<defs>${lg('sea', ['#6fd0f2', '#3fb2e6'])}${lg('isl', ['#9adb6c', '#79c650'])}</defs>
       <rect x="-200" y="-300" width="1800" height="1600" fill="url(#sea)"/>
@@ -369,14 +369,14 @@
       ${banner(oneLine(T.world), '#F25F8B', 700, 52, 40)}
       ${Object.entries(MAP_SPOTS).map(([id, m]) => `
         <g transform="translate(${m.x} ${m.y})"><g class="it bldg" data-tap="loc:${id}">${hit(150)}<g filter="url(#depth)">${A[m.art]()}</g></g></g>
-        ${m.heads.map((h, k) => `<g transform="translate(${m.hx} ${m.hy + k * 82}) scale(.5)"><g class="it bob" data-tap="loc:${id}">${hit(80)}<circle r="74" fill="#fff" stroke="${LOC_COLOR[id]}" stroke-width="8" filter="url(#lift)"/>${A.head(GUIDES[h].look)}</g></g>`).join('')}
+        ${m.heads.map((h, k) => `<g transform="translate(${m.hx} ${m.hy + k * 82}) scale(.5)"><g class="it" data-tap="loc:${id}">${hit(80)}<circle r="74" fill="#fff" stroke="${LOC_COLOR[id]}" stroke-width="8" filter="url(#lift)"/>${A.head(GUIDES[h].look)}</g></g>`).join('')}
         ${progress.stickers[id] ? `<g transform="translate(${m.x - 115} ${m.y - 105}) scale(.42)" filter="url(#depth)">${A.star('#F7C928')}</g>` : ''}
         ${pill(m.x, m.y + 122, signLines(id), { size: 25, bg: LOC_COLOR[id], fg: '#fff', sub: '#ffffffdd', attrs: `data-tap="loc:${id}"` })}`).join('')}
       ${guideSvg('mari', 540, 600, 0.55, false)}
       ${place(1320, 905, 0.85, hit(80) + item(A.stickerBook()), 'data-tap="book"')}${pill(1320, 805, langLines(T.stickers), { size: 22, pad: 14 })}
       <g transform="translate(1345 60)"><g class="gear" data-tap="gear">${A.gear()}</g></g>${pill(1345, 128, [T.grownups[settings.lang === 'pt' ? 'pt' : 'en']], { size: 15, pad: 10, bg: '#ffffffcc', fg: '#5a4f66' })}
       ${pill(700, 132, [oneLine(T.tapPlace)], { size: 24, bg: '#ffffffee' })}`, 'linear-gradient(#6fd0f2 50%, #3fb2e6 50%)');
-    Speech.say(SHARED.where);
+    Speech.say(fromTitle === true ? [SHARED.welcome, SHARED.where] : SHARED.where);
     return tok;
   }
 
@@ -731,7 +731,10 @@
   });
 
   /* ---------- input ---------- */
-  let lastTap = 0;
+  let lastTap = 0, lastKey = '';
+  /* size the game to the real visible screen (iPad home-screen apps can report 100vh wrongly) */
+  function fit() { stage.style.width = window.innerWidth + 'px'; stage.style.height = window.innerHeight + 'px'; }
+  fit(); window.addEventListener('resize', fit); window.addEventListener('orientationchange', () => setTimeout(fit, 300));
   stage.addEventListener('pointerdown', e => {
     if (!e.isPrimary) return;
     e.preventDefault();
@@ -740,7 +743,7 @@
     if (!t) { const p = svgPoint(e); burst(p.x, p.y, 8, false); SFX.sparkle(); return; }
     const key = t.dataset.tap;
     if (key === 'gear') return startHold(t);
-    const now = Date.now(); if (now - lastTap < 200) return; lastTap = now;
+    const now = Date.now(); if (key === lastKey && now - lastTap < 250) return; lastTap = now; lastKey = key;
     handleTap(key, t);
   });
   window.addEventListener('pointerup', endHold);
@@ -751,19 +754,16 @@
   async function handleTap(key, el) {
     if (key === 'start') {
       Speech.unlock(); SFX.yay();
-      const tok = sceneTok;
-      await Speech.say(SHARED.welcome);
-      if (alive(tok)) mapScreen();
+      mapScreen(true);
       return;
     }
     if (key.startsWith('loc:')) {
       const id = key.slice(4);
       const tok = sceneTok;
-      restart(el, 'yay'); SFX.whoosh();
+      SFX.whoosh();
       const p = centerOf(el); burst(p.x, p.y, 14, false);
-      stage.querySelectorAll(`[data-tap="loc:${id}"]`).forEach(x => restart(x, 'yay'));
-      await Speech.say(LOCATIONS[id].to);
-      if (alive(tok)) playLocation(id);
+      stage.querySelectorAll(`.it[data-tap="loc:${id}"]`).forEach(x => restart(x, 'yay'));
+      setTimeout(() => { if (alive(tok)) playLocation(id); }, 280);
       return;
     }
     if (key === 'home') { SFX.pop(); return mapScreen(); }

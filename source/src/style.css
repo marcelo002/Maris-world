@@ -3,11 +3,7 @@ html, body { margin: 0; height: 100%; background: #7fd3f0; overflow: hidden; ove
   font-family: ui-rounded, "Arial Rounded MT Bold", "Chalkboard SE", system-ui, sans-serif; }
 /* Fill the whole screen, including under the iPad status bar, then keep the game inside the safe area.
    The height calc fixes iOS home-screen apps that leave a strip at the bottom with a translucent status bar. */
-html { height: calc(100% + env(safe-area-inset-top)); }
-body { position: relative; height: 100%; }
-#stage { position: absolute; top: env(safe-area-inset-top); bottom: env(safe-area-inset-bottom); left: env(safe-area-inset-left); right: env(safe-area-inset-right);
-  width: auto; height: auto; display: block; opacity: 0; }
-@supports not (top: env(safe-area-inset-top)) { #stage { inset: 0; } }
+#stage { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; display: block; opacity: 0; }
 #stage.show { animation: fadein .35s ease forwards; }
 @keyframes fadein { from { opacity: 0 } to { opacity: 1 } }
 .it { transform-box: fill-box; transform-origin: center; }
