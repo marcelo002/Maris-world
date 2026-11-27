@@ -330,34 +330,54 @@
     return `<path d="M${-R - 2} ${H + 4} Q${-R - 4} ${H - R * 1.2} 0 ${H - R - 4} Q${R + 4} ${H - R * 1.2} ${R + 2} ${H + 4} Q${R * 0.7} ${H - R * 0.55} ${R * 0.15} ${H - R * 0.62} Q${-R * 0.5} ${H - R * 0.45} ${-R - 2} ${H + 4}Z" fill="${c}" ${S}/>`;
   }
   function face(p, H, R) {
-    let s = `<circle cx="0" cy="${H}" r="${R}" fill="${p.skin}" ${S}/>`;
-    s += `<ellipse cx="${-R - 2}" cy="${H + 4}" rx="9" ry="13" fill="${p.skin}" ${S}/><ellipse cx="${R + 2}" cy="${H + 4}" rx="9" ry="13" fill="${p.skin}" ${S}/>`;
-    s += `<circle cx="0" cy="${H}" r="${R - 2.5}" fill="${p.skin}"/>`;
+    const skinLine = darken(p.skin, 0.62), brow = darken(p.hair, 0.7);
+    let s = `<ellipse cx="${-R - 2}" cy="${H + 4}" rx="9" ry="13" fill="${p.skin}" ${S}/><ellipse cx="${R + 2}" cy="${H + 4}" rx="9" ry="13" fill="${p.skin}" ${S}/>`;
+    s += `<circle cx="0" cy="${H}" r="${R}" fill="${p.skin}" ${S}/>`;
+    s += `<path d="M${-R * 0.62} ${H + R * 0.55} Q0 ${H + R * 1.15} ${R * 0.62} ${H + R * 0.55} Q${R * 0.3} ${H + R * 0.98} 0 ${H + R * 0.98} Q${-R * 0.3} ${H + R * 0.98} ${-R * 0.62} ${H + R * 0.55}Z" fill="${skinLine}" opacity=".12"/>`;
     s += eyes(R * 0.36, H - 2, R * 0.13) + cheeks(R * 0.55, H + R * 0.3);
-    if (p.beard) s += `<path d="M${-R + 4} ${H + 6} Q${-R + 6} ${H + R + 14} 0 ${H + R + 16} Q${R - 6} ${H + R + 14} ${R - 4} ${H + 6} Q${R * 0.5} ${H + R * 0.6} 0 ${H + R * 0.55} Q${-R * 0.5} ${H + R * 0.6} ${-R + 4} ${H + 6}Z" fill="${p.hair}" opacity=".9"/>`;
-    s += `<g class="mouth"><path d="M${-R * 0.3} ${H + R * 0.38} Q0 ${H + R * 0.78} ${R * 0.3} ${H + R * 0.38}Z" fill="#b23a48" stroke="${INK}" stroke-width="4" stroke-linejoin="round"/></g>`;
-    if (p.glasses) s += `<circle cx="${-R * 0.36}" cy="${H - 2}" r="${R * 0.28}" fill="#fff" fill-opacity=".25" stroke="${INK}" stroke-width="4"/><circle cx="${R * 0.36}" cy="${H - 2}" r="${R * 0.28}" fill="#fff" fill-opacity=".25" stroke="${INK}" stroke-width="4"/><path d="M${-R * 0.08} ${H - 4} L${R * 0.08} ${H - 4}" stroke="${INK}" stroke-width="4"/>`;
+    s += `<path d="M${-R * 0.52} ${H - R * 0.34} Q${-R * 0.36} ${H - R * 0.46} ${-R * 0.2} ${H - R * 0.36} M${R * 0.2} ${H - R * 0.36} Q${R * 0.36} ${H - R * 0.46} ${R * 0.52} ${H - R * 0.34}" fill="none" stroke="${brow}" stroke-width="4.5" stroke-linecap="round"/>`;
+    s += `<path d="M${-R * 0.07} ${H + R * 0.14} Q0 ${H + R * 0.24} ${R * 0.07} ${H + R * 0.14}" fill="none" stroke="${skinLine}" stroke-width="3.5" stroke-linecap="round"/>`;
+    if (p.beard) s += `<path d="M${-R + 4} ${H + 6} Q${-R + 6} ${H + R + 14} 0 ${H + R + 16} Q${R - 6} ${H + R + 14} ${R - 4} ${H + 6} Q${R * 0.5} ${H + R * 0.6} 0 ${H + R * 0.55} Q${-R * 0.5} ${H + R * 0.6} ${-R + 4} ${H + 6}Z" fill="${p.hair}" opacity=".92"/>`;
+    s += `<g class="mouth"><path d="M${-R * 0.3} ${H + R * 0.38} Q0 ${H + R * 0.78} ${R * 0.3} ${H + R * 0.38}Z" fill="#b23a48" stroke="${darken('#b23a48', 0.6)}" stroke-width="3.5" stroke-linejoin="round"/><path d="M${-R * 0.16} ${H + R * 0.58} Q0 ${H + R * 0.5} ${R * 0.16} ${H + R * 0.58} Q0 ${H + R * 0.7} ${-R * 0.16} ${H + R * 0.58}Z" fill="#f07e8e"/></g>`;
+    if (p.glasses) s += `<circle cx="${-R * 0.36}" cy="${H - 2}" r="${R * 0.28}" fill="#fff" fill-opacity=".25" stroke="#4a3b52" stroke-width="4"/><circle cx="${R * 0.36}" cy="${H - 2}" r="${R * 0.28}" fill="#fff" fill-opacity=".25" stroke="#4a3b52" stroke-width="4"/><path d="M${-R * 0.08} ${H - 4} L${R * 0.08} ${H - 4}" stroke="#4a3b52" stroke-width="4"/>`;
     return s;
   }
+  const hairShine = (H, R) => `<path d="M${-R * 0.55} ${H - R * 0.72} Q${-R * 0.2} ${H - R * 1.0} ${R * 0.25} ${H - R * 0.92}" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" opacity=".3"/>`;
   A.head = (p) => {
     const R = 58;
-    return hairBack(p, 0, R) + face(p, 0, R) + hairFront(p, 0, R);
+    return hairBack(p, 0, R) + face(p, 0, R) + hairFront(p, 0, R) + (p.style !== 'thin' ? hairShine(0, R) : '');
   };
   A.person = (p) => {
     const kid = !!p.kid;
     const R = kid ? 60 : 56, L = kid ? -64 : -96, T = kid ? -142 : -204, Hc = T - R + 6;
-    const bw = kid ? 46 : 52;
+    const bw = kid ? 46 : 52, shirtD = darken(p.shirt, 0.82), pantsD = darken(p.pants, 0.8);
     let s = '';
-    s += `<ellipse cx="0" cy="6" rx="${bw + 20}" ry="12" fill="#000" opacity=".12"/>`;
+    s += `<ellipse cx="0" cy="6" rx="${bw + 26}" ry="13" fill="#1b1030" opacity=".16"/>`;
     s += `<rect x="${-bw + 6}" y="${L - 6}" width="${bw - 10}" height="${-L}" rx="12" fill="${p.pants}" ${S}/><rect x="4" y="${L - 6}" width="${bw - 10}" height="${-L}" rx="12" fill="${p.pants}" ${S}/>`;
-    s += `<ellipse cx="${-bw / 2 - 2}" cy="0" rx="26" ry="12" fill="${INK}"/><ellipse cx="${bw / 2 + 2}" cy="0" rx="26" ry="12" fill="${INK}"/>`;
+    s += `<rect x="4" y="${L - 6}" width="${(bw - 10) * 0.4}" height="${-L - 4}" rx="8" fill="${pantsD}" opacity=".5"/>`;
+    s += `<path d="M${-bw / 2 - 30} 4 Q${-bw / 2 - 28} -16 ${-bw / 2} -14 Q${-bw / 2 + 24} -14 ${-bw / 2 + 24} 4Z" fill="#4a3b52" stroke="#2f2536" stroke-width="3"/><path d="M${bw / 2 - 24} 4 Q${bw / 2 - 24} -14 ${bw / 2} -14 Q${bw / 2 + 28} -16 ${bw / 2 + 30} 4Z" fill="#4a3b52" stroke="#2f2536" stroke-width="3"/>`;
+    s += `<ellipse cx="${-bw / 2 - 6}" cy="-8" rx="9" ry="3.5" fill="#fff" opacity=".35"/><ellipse cx="${bw / 2 + 6}" cy="-8" rx="9" ry="3.5" fill="#fff" opacity=".35"/>`;
+    s += `<path d="M${-bw + 6} ${T + 18} L${-bw - 18} ${L - 10}" stroke="${darken(p.shirt, 0.6)}" stroke-width="30" stroke-linecap="round"/><path d="M${-bw + 6} ${T + 18} L${-bw - 18} ${L - 10}" stroke="${p.shirt}" stroke-width="21" stroke-linecap="round"/><circle cx="${-bw - 18}" cy="${L - 4}" r="15" fill="${p.skin}" ${S}/>`;
     s += `<path d="M${-bw} ${L + 4} L${-bw} ${T + 26} Q${-bw} ${T} ${-bw + 26} ${T} L${bw - 26} ${T} Q${bw} ${T} ${bw} ${T + 26} L${bw} ${L + 4}Z" fill="${p.shirt}" ${S}/>`;
-    s += `<path d="M${-bw + 6} ${T + 18} L${-bw - 18} ${L - 10}" stroke="${INK}" stroke-width="30" stroke-linecap="round"/><path d="M${-bw + 6} ${T + 18} L${-bw - 18} ${L - 10}" stroke="${p.shirt}" stroke-width="21" stroke-linecap="round"/><circle cx="${-bw - 18}" cy="${L - 4}" r="15" fill="${p.skin}" ${S}/>`;
-    s += `<g class="arm"><path d="M${bw - 6} ${T + 18} L${bw + 18} ${L - 10}" stroke="${INK}" stroke-width="30" stroke-linecap="round"/><path d="M${bw - 6} ${T + 18} L${bw + 18} ${L - 10}" stroke="${p.shirt}" stroke-width="21" stroke-linecap="round"/><circle cx="${bw + 18}" cy="${L - 4}" r="15" fill="${p.skin}" ${S}/></g>`;
-    s += `<rect x="-12" y="${T - 16}" width="24" height="22" fill="${p.skin}" ${S}/>`;
-    s += hairBack(p, Hc, R) + face(p, Hc, R) + hairFront(p, Hc, R);
+    s += `<path d="M${bw * 0.35} ${T + 4} Q${bw - 4} ${T + 4} ${bw - 3} ${T + 30} L${bw - 3} ${L + 2} L${bw * 0.45} ${L + 2}Z" fill="${shirtD}" opacity=".55"/>`;
+    s += `<path d="M-20 ${T + 1} Q0 ${T + 26} 20 ${T + 1}" fill="${darken(p.skin, 0.9)}" stroke="${darken(p.shirt, 0.6)}" stroke-width="4"/>`;
+    s += `<g class="arm"><path d="M${bw - 6} ${T + 18} L${bw + 18} ${L - 10}" stroke="${darken(p.shirt, 0.6)}" stroke-width="30" stroke-linecap="round"/><path d="M${bw - 6} ${T + 18} L${bw + 18} ${L - 10}" stroke="${p.shirt}" stroke-width="21" stroke-linecap="round"/><circle cx="${bw + 18}" cy="${L - 4}" r="15" fill="${p.skin}" ${S}/></g>`;
+    s += `<rect x="-12" y="${T - 16}" width="24" height="22" fill="${darken(p.skin, 0.9)}"/>`;
+    s += hairBack(p, Hc, R) + face(p, Hc, R) + hairFront(p, Hc, R) + (p.style !== 'thin' ? hairShine(Hc, R) : '');
     return s;
   };
+
+  /* ---------- scenery ---------- */
+  A.bush = (c = '#5cb84a') => `<circle cx="-50" cy="0" r="46" fill="${c}" ${S}/><circle cx="50" cy="0" r="46" fill="${c}" ${S}/><circle cx="0" cy="-26" r="58" fill="${c}" ${S}/><path d="M-96 10 L96 10 Q96 40 60 40 L-60 40 Q-96 40 -96 10Z" fill="${c}"/><circle cx="-14" cy="-50" r="14" fill="#fff" opacity=".25"/>`;
+  A.roundTree = (c = '#4fae3f', h = 1) => `<rect x="-16" y="${-10}" width="32" height="${110 * h}" rx="8" fill="#8a5a2b" ${S}/><circle cx="0" cy="-70" r="86" fill="${c}" ${S}/><circle cx="-34" cy="-96" r="22" fill="#fff" opacity=".18"/>`;
+  A.tuft = (c = '#4a9e36') => `<path d="M-18 0 Q-14 -26 -8 0 Q-2 -34 4 0 Q10 -24 16 0Z" fill="${c}"/>`;
+  A.plant = () => `<path d="M-40 20 L40 20 L30 90 L-30 90Z" fill="#E8743C" ${S}/><rect x="-46" y="10" width="92" height="20" rx="8" fill="#F58A2A" ${S}/>
+    <path d="M0 10 Q-60 -40 -50 -100 Q-10 -60 0 10Z M0 10 Q60 -40 56 -96 Q10 -60 0 10Z M0 10 Q-6 -80 10 -130 Q24 -70 0 10Z" fill="#4CB944" ${S}/>`;
+  A.clock = () => `<circle r="70" fill="#fff" ${S}/><circle r="58" fill="#FFF3C4"/>${[0, 1, 2, 3].map(i => `<rect x="-3" y="-54" width="6" height="12" rx="3" fill="#9a8a70" transform="rotate(${i * 90})"/>`).join('')}<path d="M0 0 L0 -38 M0 0 L26 10" stroke="#4a3b52" stroke-width="7" stroke-linecap="round"/><circle r="6" fill="#E8453C"/>`;
+  A.armchair = (c = '#3A9AD9') => `<rect x="-110" y="-120" width="220" height="150" rx="40" fill="${c}" ${S}/><rect x="-140" y="-40" width="60" height="120" rx="26" fill="${c}" ${S}/><rect x="80" y="-40" width="60" height="120" rx="26" fill="${c}" ${S}/><rect x="-86" y="-10" width="172" height="80" rx="20" fill="${c}" ${S}/><rect x="-100" y="70" width="18" height="30" rx="6" fill="#8a5a2b"/><rect x="82" y="70" width="18" height="30" rx="6" fill="#8a5a2b"/>`;
+  A.bench = () => `<rect x="-120" y="-60" width="240" height="22" rx="8" fill="#C77B3A" ${S}/><rect x="-120" y="-30" width="240" height="22" rx="8" fill="#C77B3A" ${S}/><rect x="-130" y="0" width="260" height="24" rx="8" fill="#D98C48" ${S}/><rect x="-110" y="20" width="16" height="50" fill="#4a3b52"/><rect x="94" y="20" width="16" height="50" fill="#4a3b52"/>`;
+  A.crate = (fruit) => `<rect x="-90" y="-20" width="180" height="90" rx="8" fill="#D9A15A" ${S}/><path d="M-90 10 L90 10 M-90 40 L90 40" stroke="#b97f3c" stroke-width="5"/>${[-60, -20, 20, 60].map(x => `<g transform="translate(${x} -30) scale(.3)">${A[fruit]()}</g>`).join('')}`;
+  A.watering = () => `<path d="M-60 -40 L40 -40 L50 60 L-70 60Z" fill="#3A9AD9" ${S}/><path d="M40 -10 L110 -60 L118 -50 L50 10Z" fill="#3A9AD9" ${S}/><path d="M-60 -40 Q-110 -40 -100 10 Q-96 40 -66 30" fill="none" stroke="#2b78b5" stroke-width="12" stroke-linecap="round"/>`;
 
   /* ---------- map buildings ---------- */
   A.bHouse = () => `
@@ -402,6 +422,20 @@
     <g transform="translate(-40 40) scale(.5)">${A.flower('#F78FB3')}</g><g transform="translate(40 40) scale(.5)">${A.flower('#F7C928')}</g>
     <g transform="translate(0 0) scale(.4)">${A.butterfly()}</g>`;
 
+  /* soft coloured outlines: each shape's outline becomes a darker shade of its own fill */
+  const expand = h => (h.length === 4 ? '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3] : h);
+  function polish(svg) {
+    return svg.replace(/<(circle|ellipse|rect|path)\b([^>]*)>/g, (m, tag, attrs) => {
+      if (attrs.indexOf('stroke="' + INK + '"') < 0) return m;
+      const f = attrs.match(/fill="(#[0-9a-fA-F]{3,6})"/);
+      if (!f) return m;
+      const hex = expand(f[1]).toLowerCase();
+      const col = hex === '#ffffff' ? '#a9b3c7' : darken(hex, 0.6);
+      return '<' + tag + attrs.replace('stroke="' + INK + '"', 'stroke="' + col + '"').replace('stroke-width="5"', 'stroke-width="4.5"') + '>';
+    });
+  }
+  Object.keys(A).forEach(k => { const f = A[k]; A[k] = (...a) => polish(f(...a)); });
   A.darken = darken;
+  A.polish = polish;
   G.MW_ART = A;
 })(typeof window !== 'undefined' ? window : globalThis);
